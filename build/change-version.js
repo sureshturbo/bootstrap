@@ -15,6 +15,11 @@ const sh = require('shelljs')
 
 sh.config.fatal = true
 
+const VERBOSE = process.argv.includes('--verbose')
+const DRY_RUN = process.argv.includes('--dry') || process.argv.includes('--dry-run')
+
+const ROOT_DIR = path.join(__dirname, '..')
+
 // Blame TC39... https://github.com/benjamingr/RegExp.escape/issues/37
 function regExpQuote(string) {
   return string.replace(/[$()*+-.?[\\\]^{|}]/g, '\\$&')
@@ -23,8 +28,6 @@ function regExpQuote(string) {
 function regExpQuoteReplacement(string) {
   return string.replace(/\$/g, '$$')
 }
-
-const DRY_RUN = false
 
 function walkAsync(directory, excludedDirectories, fileCallback, errback) {
   if (excludedDirectories.has(path.parse(directory).base)) {
@@ -56,21 +59,21 @@ function walkAsync(directory, excludedDirectories, fileCallback, errback) {
 }
 
 function replaceRecursively(directory, excludedDirectories, allowedExtensions, original, replacement) {
-  original = new RegExp(regExpQuote(original), 'g')
-  replacement = regExpQuoteReplacement(replacement)
-  const updateFile = DRY_RUN ?
-    filepath => {
-      if (allowedExtensions.has(path.parse(filepath).ext)) {
+  const updateFile = filepath => {
+    if (allowedExtensions.has(path.parse(filepath).ext)) {
+      if (VERBOSE) {
         console.log(`FILE: ${filepath}`)
-      } else {
-        console.log(`EXCLUDED:${filepath}`)
       }
-    } :
-    filepath => {
-      if (allowedExtensions.has(path.parse(filepath).ext)) {
-        sh.sed('-i', original, replacement, filepath)
+
+      if (DRY_RUN) {
+        return
       }
+
+      sh.sed('-i', new RegExp(regExpQuote(original), 'g'), regExpQuoteReplacement(replacement), filepath)
+    } else if (VERBOSE) {
+      console.log(`EXCLUDED: ${filepath}`)
     }
+  }
 
   walkAsync(directory, excludedDirectories, updateFile, err => {
     console.error('ERROR while traversing directory!:')
@@ -80,14 +83,14 @@ function replaceRecursively(directory, excludedDirectories, allowedExtensions, o
 }
 
 function main(args) {
-  if (args.length !== 2) {
-    console.error('USAGE: change-version old_version new_version')
+  const [oldVersion, newVersion] = args
+
+  if (!oldVersion || !newVersion) {
+    console.error('USAGE: change-version old_version new_version [--verbose] [--dry[-run]]')
     console.error('Got arguments:', args)
     process.exit(1)
   }
 
-  const oldVersion = args[0]
-  const newVersion = args[1]
   const EXCLUDED_DIRS = new Set([
     '.git',
     '_site',
@@ -95,7 +98,7 @@ function main(args) {
     'resources'
   ])
   const INCLUDED_EXTENSIONS = new Set([
-    // This extension allowlist is how we avoid modifying binary files
+    // This extensions list is how we avoid modifying binary files
     '',
     '.css',
     '.html',
@@ -106,7 +109,8 @@ function main(args) {
     '.txt',
     '.yml'
   ])
-  replaceRecursively('.', EXCLUDED_DIRS, INCLUDED_EXTENSIONS, oldVersion, newVersion)
+
+  replaceRecursively(ROOT_DIR, EXCLUDED_DIRS, INCLUDED_EXTENSIONS, oldVersion, newVersion)
 }
 
 main(process.argv.slice(2))
