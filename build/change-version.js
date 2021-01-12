@@ -11,9 +11,6 @@
 
 const fs = require('fs')
 const path = require('path')
-const sh = require('shelljs')
-
-sh.config.fatal = true
 
 const VERBOSE = process.argv.includes('--verbose')
 const DRY_RUN = process.argv.includes('--dry') || process.argv.includes('--dry-run')
@@ -34,9 +31,9 @@ function walkAsync(directory, excludedDirectories, fileCallback, errback) {
     return
   }
 
-  fs.readdir(directory, (err, names) => {
-    if (err) {
-      errback(err)
+  fs.readdir(directory, (error, names) => {
+    if (error) {
+      errback(error)
       return
     }
 
@@ -60,7 +57,25 @@ function walkAsync(directory, excludedDirectories, fileCallback, errback) {
 
 function replaceRecursively(directory, excludedDirectories, allowedExtensions, original, replacement) {
   const updateFile = filepath => {
-    if (allowedExtensions.has(path.parse(filepath).ext)) {
+    if (!allowedExtensions.has(path.parse(filepath).ext) && VERBOSE) {
+      console.log(`EXCLUDED: ${filepath}`)
+      return
+    }
+
+    fs.readFile(filepath, 'utf8', (error, originalData) => {
+      if (error) {
+        throw error
+      }
+
+      const newData = originalData.replace(
+        new RegExp(regExpQuote(original), 'g'),
+        regExpQuoteReplacement(replacement)
+      )
+
+      if (originalData === newData) {
+        return
+      }
+
       if (VERBOSE) {
         console.log(`FILE: ${filepath}`)
       }
@@ -69,10 +84,12 @@ function replaceRecursively(directory, excludedDirectories, allowedExtensions, o
         return
       }
 
-      sh.sed('-i', new RegExp(regExpQuote(original), 'g'), regExpQuoteReplacement(replacement), filepath)
-    } else if (VERBOSE) {
-      console.log(`EXCLUDED: ${filepath}`)
-    }
+      fs.writeFile(filepath, newData, 'utf8', err => {
+        if (err) {
+          throw err
+        }
+      })
+    })
   }
 
   walkAsync(directory, excludedDirectories, updateFile, err => {
