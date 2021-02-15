@@ -64,6 +64,12 @@ async function main(args) {
     process.exit(1)
   }
 
+  [oldVersion, newVersion].forEach(arg => {
+    if (arg.startsWith('v')) {
+      arg = arg.slice(1)
+    }
+  })
+
   try {
     const files = await globby(GLOB, GLOBBY_OPTIONS)
 
