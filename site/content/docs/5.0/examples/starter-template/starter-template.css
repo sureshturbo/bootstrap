@@ -1,3 +1,19 @@
-body {
-  padding-top: 5rem;
+.icon-list {
+  list-style: none;
+  padding-left: 0;
+}
+.icon-list li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: .25rem;
+}
+.icon-list li::before {
+  display: block;
+  flex-shrink: 0;
+  content: "";
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: .5rem;
+  background: var(--bs-dark) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='#fff' class='bi bi-arrow-right' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z'/%3E%3C/svg%3E") no-repeat center center / 1.5em auto;
+  border-radius: 50%;
 }
