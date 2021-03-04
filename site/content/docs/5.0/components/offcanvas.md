@@ -191,7 +191,7 @@ Enable manually with:
 ```js
 var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas'))
 var offcanvasList = offcanvasElementList.map(function (offcanvasEl) {
-  return new bootstrap.Offcanvas(offcanvasEl)
+  return new bootstrap.OffCanvas(offcanvasEl)
 })
 ```
 
@@ -207,7 +207,7 @@ You can create an offcanvas instance with the constructor, for example:
 
 ```js
 var myOffcanvas = document.getElementById('myOffcanvas')
-var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas)
+var bsOffcanvas = new bootstrap.OffCanvas(myOffcanvas)
 ```
 
 | Method | Description |
