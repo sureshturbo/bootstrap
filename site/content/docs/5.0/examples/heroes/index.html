@@ -30,7 +30,7 @@ body_class: ""
     </div>
   </div>
   <div class="overflow-hidden" style="max-height: 30vh;">
-    <div class="col-10 mx-auto">
+    <div class="container px-5">
       <img src="bootstrap-docs.png" alt="Example image" class="img-fluid border rounded-3 shadow-lg" style="margin-bottom: -1.5rem;">
     </div>
   </div>
@@ -39,11 +39,14 @@ body_class: ""
 <div class="b-example-divider"></div>
 
 <div class="container col-xxl-8 px-4 py-5">
-  <div class="row flex-lg-row-reverse g-5 py-5">
-    <div class="col-4 col-md-5">
-      <img class="d-block mx-lg-auto img-fluid" src="/docs/{{< param docs_version >}}/assets/brand/bootstrap-logo.svg" alt="" width="256" height="256">
+  <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+    <div class="col-10 col-sm-8 col-lg-6">
+      <img class="d-block mx-lg-auto img-fluid" srcset="/docs/5.0/assets/img/bootstrap-themes.png,
+                                                  /docs/5.0/assets/img/bootstrap-themes@2x.png 2x"
+                                            src="/docs/5.0/assets/img/bootstrap-themes.png"
+                                            alt="Bootstrap Themes" width="700" height="500" loading="lazy">
     </div>
-    <div class="col-lg-7">
+    <div class="col-lg-6">
       <h1 class="display-5 fw-bold lh-1 mb-3">Responsive left-aligned hero with image</h1>
       <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
       <div class="d-grid gap-2 d-md-flex justify-content-md-start">
@@ -59,7 +62,7 @@ body_class: ""
 <div class="container col-xl-10 col-xxl-8 px-4 py-5">
   <div class="row align-items-center g-5 py-5">
     <div class="col-lg-7 text-center text-lg-start">
-      <h1 class="display-4 fw-bold lh-1 mb-3">Hero sign-up form</h1>
+      <h1 class="display-4 fw-bold lh-1 mb-3">Vertically centered hero sign-up form</h1>
       <p class="col-lg-10 fs-4">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
     </div>
     <div class="col-10 mx-auto col-lg-5">
